@@ -1,12 +1,19 @@
-import express from "express";
-import { archiveTask, createTask, getAllTasks, updateTask } from "../controllers/todo";
+// import express from "express";
+import {
+  archiveTask,
+  createTask,
+  getAllTasks,
+  updateTask,
+} from "../controllers/todo";
 
-export const todo = express.Router();
+// export const todo = express.Router();
 
-todo.post("/all", getAllTasks);
+export const todo = async(fastify: any, options: any) => {
+  fastify.post("/all", getAllTasks);
 
-todo.post("/", createTask);
+  fastify.post("/", createTask);
 
-todo.put("/", updateTask);
+  fastify.put("/:id", updateTask);
 
-todo.delete("/", archiveTask);
+  fastify.delete("/", archiveTask);
+};

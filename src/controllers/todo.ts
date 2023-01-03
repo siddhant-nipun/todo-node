@@ -1,4 +1,5 @@
 import { Request, response, Response } from "express";
+import { FastifyReply } from "fastify";
 import {
   dbArchiveTodo,
   dbCreateTask,
@@ -13,7 +14,7 @@ import {
 } from "../validations/todos";
 import { validateUserId } from "../validations/user";
 
-export const getAllTasks = async (req: Request, res: Response) => {
+export const getAllTasks = async (req: Request, res: FastifyReply) => {
   try {
     const { userId } = req.body;
     // validate body
@@ -67,7 +68,8 @@ export const createTask = async (req: Request, res: Response) => {
 
 export const updateTask = async (req: Request, res: Response) => {
   try {
-    const { userId, todoId, isCompleted, description } = req.body;
+    const { userId, isCompleted, description } = req.body;
+    const { id: todoId } = req.params;
     const validate = await validateUpdateTask({
       userId,
       todoId,
@@ -95,9 +97,7 @@ export const updateTask = async (req: Request, res: Response) => {
       return res.status(404).send({ message: "Cannot find the todo" });
     }
     res.status(200).send({
-      todoId: task.rows[0]?.id,
-      description: task.rows[0]?.description,
-      isCompleted: task.rows[0]?.is_completed,
+      message: "success",
     });
   } catch (error: any) {
     res.status(500).send("Internal server error");

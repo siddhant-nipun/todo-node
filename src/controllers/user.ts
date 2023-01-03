@@ -8,67 +8,67 @@ import {
 } from "../db/user";
 import { validateLogin, validateRegistration } from "../validations/user";
 
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (req: any, reply: any) => {
   try {
     const { email, name, password } = req.body;
 
     const validate = await validateRegistration(name, email, password);
     if (validate !== true) {
-      return res.status(400).send({ message: validate });
+      return reply.status(400).send({ message: validate });
     }
     const userExists = await dbFindUser({ email });
     if (userExists?.rowCount) {
-      return res.status(400).send({ message: "User already exists" });
+      return reply.status(400).send({ message: "User already exists" });
     }
     const user = await dbCreateUser(name, email, password);
     if (!user) {
-      return res.status(500).send({ message: "Error creating user" });
+      return reply.status(500).send({ message: "Error creating user" });
     }
-    res.send({ userId: user.rows[0]?.id });
+    reply.send({ userId: user.rows[0]?.id });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal server error" });
+    reply.status(500).send({ message: "Internal server error" });
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: any, reply: any) => {
   try {
     const { email, password } = req.body;
     const isValid = validateLogin(email, password);
     if (!isValid) {
-      return res.status(400).send({ message: "type error" });
+      return reply.status(400).send({ message: "type error" });
     }
     const userExists = await dbFindUser({ email });
     if (!userExists?.rowCount) {
-      return res.status(400).send({ message: "User does not exist" });
+      return reply.status(400).send({ message: "User does not exist" });
     }
     const user = await dbGetUserViaPassword(email, password);
     if (!user) {
-      return res.status(500).send({ message: "Internal server error" });
+      return reply.status(500).send({ message: "Internal server error" });
     }
     if (!user?.rowCount) {
-      return res.status(400).send({ message: "incorrect password" });
+      return reply.status(400).send({ message: "incorrect password" });
     }
-    res.status(200).send({
+    reply.status(200).send({
       userId: user?.rows[0]?.id,
       name: user?.rows[0]?.name,
       email: user?.rows[0]?.email,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal server error" });
+    reply.status(500).send({ message: "Internal server error" });
   }
 };
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (req: any, reply: any) => {
   try {
     const users = await dbFetchAllUsers();
     if (!users) {
-      return res.status(500).send({ message: "Internal server error" });
+      return reply.status(500).send({ message: "Internal server error" });
     }
-    res.status(200).send(users.rows);
+    reply.status(200).send(users.rows);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal server error" });
+    reply.status(500).send({ message: "Internal server error" });
   }
 };
