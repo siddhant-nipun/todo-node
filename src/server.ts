@@ -33,7 +33,7 @@ fastify.listen({ port: 5000 }, (err, address) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  console.log(`Server is running on ${address}`);
+  console.log(`Server is running at ${address}`);
 });
 
 // const app = express();
