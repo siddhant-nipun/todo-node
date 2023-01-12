@@ -14,9 +14,11 @@ import {
 } from "../validations/todos";
 import { validateUserId } from "../validations/user";
 
-export const getAllTasks = async (req: Request, res: FastifyReply) => {
+export const getAllTasks = async (req: any, res: FastifyReply) => {
   try {
     const { userId } = req.body;
+    console.log(req.userId);
+    
     // validate body
     const validate = await validateUserId(userId);
     if (validate !== true) {

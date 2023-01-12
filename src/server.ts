@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import Fastify from "fastify";
 import { connectDatabase } from "../database/db";
 import { getAllUsers, login, registerUser } from "./controllers/user";
+import setSession from "./middlewares/session";
 import { todo } from "./routes/todo";
 
 const fastify = Fastify({
@@ -24,9 +25,22 @@ fastify.post("/register", registerUser);
 
 fastify.post("/login", login);
 
+// middleware
+ fastify.register(setSession);
+
 fastify.get("/users", getAllUsers);
 
 fastify.register(todo, { prefix: "todo" });
+
+const loaded = async () => {
+  try {
+    await fastify.ready();
+    console.log("Everything is loaded");
+  } catch (error) {
+    console.log("Error loading");
+  }
+};
+loaded();
 
 fastify.listen({ port: 5000 }, (err, address) => {
   if (err) {
@@ -36,7 +50,7 @@ fastify.listen({ port: 5000 }, (err, address) => {
   console.log(`Server is running at ${address}`);
 });
 
-// const app = express();
+const app = express();
 
 // basic middleware setup
 // app.use(express.urlencoded({ extended: false }));

@@ -1,12 +1,19 @@
 import { Request, Response } from "express";
+import { FastifyReply, FastifyRequest } from "fastify";
 import * as yup from "yup";
 import {
+  dbCreateSession,
   dbCreateUser,
   dbFetchAllUsers,
   dbFindUser,
+  dbGetUserFromSession,
   dbGetUserViaPassword,
 } from "../db/user";
-import { validateLogin, validateRegistration } from "../validations/user";
+import {
+  validateLogin,
+  validateRegistration,
+  validateString,
+} from "../validations/user";
 
 export const registerUser = async (req: any, reply: any) => {
   try {
@@ -34,6 +41,7 @@ export const registerUser = async (req: any, reply: any) => {
 export const login = async (req: any, reply: any) => {
   try {
     const { email, password } = req.body;
+
     const isValid = validateLogin(email, password);
     if (!isValid) {
       return reply.status(400).send({ message: "type error" });
@@ -49,10 +57,12 @@ export const login = async (req: any, reply: any) => {
     if (!user?.rowCount) {
       return reply.status(400).send({ message: "incorrect password" });
     }
+    const session = await dbCreateSession(user?.rows[0]?.id);
+    if (!session?.rowCount) {
+      return reply.status(500).send({ message: "Error creating user session" });
+    }
     reply.status(200).send({
-      userId: user?.rows[0]?.id,
-      name: user?.rows[0]?.name,
-      email: user?.rows[0]?.email,
+      token: session.rows[0].session_token,
     });
   } catch (error) {
     console.log(error);
@@ -70,5 +80,32 @@ export const getAllUsers = async (req: any, reply: any) => {
   } catch (error) {
     console.log(error);
     reply.status(500).send({ message: "Internal server error" });
+  }
+};
+
+export const getUserBySession = async (
+  req: any,
+  reply: FastifyReply,
+  done: any
+) => {
+  try {
+    const apiKey = req.headers["x-api-key"] as string;
+    console.log(apiKey);
+    const isValid = await validateString(apiKey);
+    if (!isValid) {
+      return reply.status(401).send({ message: "not authorized" });
+    }
+    const user = await dbGetUserFromSession(apiKey);
+    if (!user) {
+      return reply.status(500).send({ message: "Internal server error" });
+    }
+    if (!user?.rowCount) {
+      return reply.status(401).send({ message: "not authorized" });
+    }
+    req.userId = user?.rows[0]?.user_id;
+    done();
+  } catch (error) {
+    console.log(error);
+    return reply.status(500).send({ message: "Internal server error" });
   }
 };

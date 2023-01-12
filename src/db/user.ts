@@ -1,4 +1,5 @@
 import { dbPool } from "../../database/db";
+import { v4 as uuidv4 } from "uuid";
 
 export const dbFindUser = ({
   email,
@@ -37,4 +38,19 @@ export const dbGetUserViaPassword = (email: string, password: string) => {
 export const dbFetchAllUsers = () => {
   const sql = "SELECT id, name, email FROM users";
   return dbPool?.query(sql);
+};
+
+export const dbGetUserFromSession = (token: string) => {
+  const sql = "SELECT user_id from user_session where session_token = $1";
+  return dbPool?.query(sql, [token]);
+};
+
+export const dbCreateSession = (userId: string) => {
+  const sql = `
+  INSERT INTO user_session (user_id, session_token, created_at)
+  VALUES ($1, $2, $3)
+  RETURNING session_token
+`;
+  const values = [userId, uuidv4(), new Date()];
+  return dbPool?.query(sql, values);
 };
