@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import Fastify from "fastify";
 import { connectDatabase } from "../database/db";
 import { getAllUsers, login, registerUser } from "./controllers/user";
-import setSession from "./middlewares/session";
+import setSession from './middlewares/session'
 import { todo } from "./routes/todo";
 
 const fastify = Fastify({
@@ -50,7 +50,7 @@ fastify.listen({ port: 5000 }, (err, address) => {
   console.log(`Server is running at ${address}`);
 });
 
-const app = express();
+// const app = express();
 
 // basic middleware setup
 // app.use(express.urlencoded({ extended: false }));

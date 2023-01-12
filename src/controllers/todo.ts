@@ -16,10 +16,7 @@ import { validateUserId } from "../validations/user";
 
 export const getAllTasks = async (req: any, res: FastifyReply) => {
   try {
-    const { userId } = req.body;
-    console.log(req.userId);
-    
-    // validate body
+    const { userId } = req;
     const validate = await validateUserId(userId);
     if (validate !== true) {
       return res.status(400).send({ message: validate });
@@ -47,9 +44,10 @@ export const getAllTasks = async (req: any, res: FastifyReply) => {
   }
 };
 
-export const createTask = async (req: Request, res: Response) => {
+export const createTask = async (req: any, res: Response) => {
   try {
-    const { userId, description } = req.body;
+    const { description } = req.body;
+    const { userId } = req;
     const validate = await validateCreateTask({ userId, description });
     if (validate !== true) {
       return res.status(400).send({ message: validate });
@@ -68,9 +66,10 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTask = async (req: Request, res: Response) => {
+export const updateTask = async (req: any, res: Response) => {
   try {
-    const { userId, isCompleted, description } = req.body;
+    const { isCompleted, description } = req.body;
+    const { userId } = req;
     const { id: todoId } = req.params;
     const validate = await validateUpdateTask({
       userId,
@@ -106,9 +105,10 @@ export const updateTask = async (req: Request, res: Response) => {
   }
 };
 
-export const archiveTask = async (req: Request, res: Response) => {
+export const archiveTask = async (req: any, res: Response) => {
   try {
-    const { userId, todoId } = req.body;
+    const { todoId } = req.body;
+    const { userId } = req;
     const validate = await validateArchiveTask({
       userId,
       todoId,
