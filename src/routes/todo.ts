@@ -9,7 +9,7 @@ import {
 // export const todo = express.Router();
 
 export const todo = async(fastify: any, options: any) => {
-  fastify.post("/all", getAllTasks);
+  fastify.get("/", getAllTasks);
 
   fastify.post("/", createTask);
 

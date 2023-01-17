@@ -2,7 +2,8 @@ import express, { Request, Response } from "express";
 import Fastify from "fastify";
 import { connectDatabase } from "../database/db";
 import { getAllUsers, login, registerUser } from "./controllers/user";
-import setSession from './middlewares/session'
+import setSession from "./middlewares/session";
+import authMiddleware from "./middlewares/auth";
 import { todo } from "./routes/todo";
 
 const fastify = Fastify({
@@ -26,7 +27,8 @@ fastify.post("/register", registerUser);
 fastify.post("/login", login);
 
 // middleware
- fastify.register(setSession);
+//  fastify.register(setSession);
+fastify.register(authMiddleware);
 
 fastify.get("/users", getAllUsers);
 

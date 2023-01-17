@@ -1,0 +1,1 @@
+export const jwtSecretKey='my_todo_app'
