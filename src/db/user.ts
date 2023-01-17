@@ -47,10 +47,15 @@ export const dbGetUserFromSession = (token: string) => {
 
 export const dbCreateSession = (userId: string) => {
   const sql = `
-  INSERT INTO user_session (user_id, session_token, created_at)
-  VALUES ($1, $2, $3)
+  INSERT INTO user_session (user_id, session_token, created_at, archived_at)
+  VALUES ($1, $2, $3, $4)
   RETURNING session_token
 `;
-  const values = [userId, uuidv4(), new Date()];
+  const values = [
+    userId,
+    uuidv4(),
+    new Date(),
+    new Date(new Date().getTime() + 15 * 60 * 1000),
+  ];
   return dbPool?.query(sql, values);
 };

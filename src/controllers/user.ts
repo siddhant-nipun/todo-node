@@ -35,8 +35,11 @@ export const registerUser = async (req: any, reply: any) => {
     if (!user) {
       return reply.status(500).send({ message: "Error creating user" });
     }
-    // reply.send({ userId: user.rows[0]?.id });
     const jwtToken = generateToken(user.rows[0]?.id);
+    const session = await dbCreateSession(user?.rows[0]?.id);
+    if (!session?.rowCount) {
+      return reply.status(500).send({ message: "Error creating user session" });
+    }
     reply.status(200).send({
       token: jwtToken,
       // sessionToken: session.rows[0].session_token,
