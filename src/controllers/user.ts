@@ -151,7 +151,7 @@ export const getUserByJWT = async (
     if (!userExists?.rowCount) {
       return reply.status(400).send({ message: "Cannot find user" });
     }
-    done();
+    return;
   } catch (error) {
     console.log(error);
     return reply.status(500).send({ message: "Internal server error" });
