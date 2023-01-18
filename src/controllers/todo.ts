@@ -7,26 +7,38 @@ import {
   dbUpdateTodo,
 } from "../db/todos";
 import { dbFindUser } from "../db/user";
+import { FastifyRequestWithUserId } from "../types";
 import {
   validateArchiveTask,
   validateCreateTask,
   validateUpdateTask,
 } from "../validations/todos";
-import { validateUserId } from "../validations/user";
+import {
+  validateBool,
+  validateString,
+  validateUserId,
+} from "../validations/user";
 
 export const getAllTasks = async (req: any, res: FastifyReply) => {
   try {
     const { userId } = req;
-    const validate = await validateUserId(userId);
-    if (validate !== true) {
-      return res.status(400).send({ message: validate });
+    const isCompleted = req.query?.isCompleted ?? null;
+    const search = req.query.search ?? null;
+    
+    if (isCompleted !== null) {
+      const validateIsCompleted = await validateBool(isCompleted);
+      if (validateIsCompleted !== true) {
+        return res.status(400).send({ message: validateIsCompleted });
+      }
     }
-    const userExists = await dbFindUser({ userId });
-    if (!userExists?.rowCount) {
-      return res.status(400).send({ message: "Error creating todo" });
+    if (search !== null) {
+      const validateSearch = await validateString(search);
+      if (validateSearch !== true) {
+        return res.status(400).send({ message: validateSearch });
+      }
     }
     // fetch from database
-    const todos = await dbGetUserTodos({ userId });
+    const todos = await dbGetUserTodos({ userId, isCompleted, search });
     if (!todos) {
       return res.status(500).send({ message: "Internal server error" });
     }
@@ -40,7 +52,7 @@ export const getAllTasks = async (req: any, res: FastifyReply) => {
     // success
     res.status(200).send(responseTodo);
   } catch (error: any) {
-    res.status(500).send("Internal server error");
+    res.status(500).send({ message: "Internal server error" });
   }
 };
 

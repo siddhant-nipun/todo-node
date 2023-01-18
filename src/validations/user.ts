@@ -57,3 +57,15 @@ export const validateString = async (str: string) => {
     return error?.errors;
   }
 };
+
+export const validateBool = async (val: string) => {
+  let loginSchema = yup.object().shape({
+    val: yup.bool().required(),
+  });
+  try {
+    await loginSchema.validate({ val });
+    return true;
+  } catch (error: any) {
+    return error?.errors;
+  }
+};

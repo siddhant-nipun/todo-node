@@ -147,6 +147,10 @@ export const getUserByJWT = async (
     } else {
       return reply.status(401).send({ message: "not authorized" });
     }
+    const userExists = await dbFindUser({ userId: req.userId });
+    if (!userExists?.rowCount) {
+      return reply.status(400).send({ message: "Cannot find user" });
+    }
     done();
   } catch (error) {
     console.log(error);
