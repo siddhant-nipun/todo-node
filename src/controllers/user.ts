@@ -107,7 +107,6 @@ export const getUserBySession = async (
       return;
     }
     const apiKey = req.headers["x-api-key"] as string;
-    console.log(apiKey);
     const isValid = await validateString(apiKey);
     if (!isValid) {
       return reply.status(401).send({ message: "not authorized" });

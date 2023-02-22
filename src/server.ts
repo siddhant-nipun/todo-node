@@ -10,6 +10,8 @@ const fastify = Fastify({
   logger: true,
 });
 
+// var temp = process.env.NEXT_PUBLIC_DATABASE_NAME ?? "";
+
 connectDatabase({
   user: "local",
   host: "localhost",

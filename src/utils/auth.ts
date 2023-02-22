@@ -11,7 +11,7 @@ export const generateToken = (userId: string) => {
 export const verifyToken = (token: string) => {
   try {
     const verified = jwt.verify(token, jwtSecretKey, {
-      maxAge: 15*60*1000,
+      // maxAge: 15*60*1000,
     });
     if (verified) {
       return verified;

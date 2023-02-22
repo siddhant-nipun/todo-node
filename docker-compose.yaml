@@ -1,5 +1,9 @@
 version: "3.3"
 services:
+  web:
+    build: .
+    ports: 
+      - "8080:5000"
   db:
     image:  "postgres:13"
     ports:
@@ -10,3 +14,6 @@ services:
       - POSTGRES_USER=local
       - POSTGRES_PASSWORD=12345
       - POSTGRES_DB=postgres
+
+volumes:
+  pgdata:
