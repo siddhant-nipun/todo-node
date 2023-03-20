@@ -5,20 +5,38 @@ import { getAllUsers, login, registerUser } from "./controllers/user";
 import setSession from "./middlewares/session";
 import authMiddleware from "./middlewares/auth";
 import { todo } from "./routes/todo";
+import * as dotenv from "dotenv";
+import cors from '@fastify/cors'
+
+dotenv.config();
 
 const fastify = Fastify({
   logger: true,
 });
 
-// var temp = process.env.NEXT_PUBLIC_DATABASE_NAME ?? "";
+console.log({
+  pg_host : process.env.PG_HOST,
+  user: process.env.PGUSER ?? "",
+  host: process.env.PGHOST ?? "",
+  database: process.env.PGDATABASE ?? "",
+  password: process.env.PGPASSWORD ?? "",
+  port: parseInt(process.env.PGPORT ?? ""),
+})
 
 connectDatabase({
-  user: "local",
-  host: "localhost",
-  database: "postgres",
-  password: "12345",
-  port: 5433,
+  user: process.env.PGUSER ?? "",
+  host: process.env.PGHOST ?? "",
+  database: process.env.PGDATABASE ?? "",
+  password: process.env.PGPASSWORD ?? "",
+  port: parseInt(process.env.PGPORT ?? ""),
 });
+
+// connectDatabase(process.env.DATABASE_URL ?? "");
+
+fastify.register(cors, {
+  origin: ['http://localhost:3001', 'http://localhost:3000'],
+});
+
 
 fastify.get("/health", (req, reply) => {
   reply.send("ok");
@@ -53,36 +71,3 @@ fastify.listen({ port: 5000 }, (err, address) => {
   }
   console.log(`Server is running at ${address}`);
 });
-
-// const app = express();
-
-// basic middleware setup
-// app.use(express.urlencoded({ extended: false }));
-// app.use(express.json());
-
-// // routes setup
-// app.get("/health", (req: Request, res: Response) => {
-//   res.status(200).send("ok");
-// });
-
-// app.post("/register", registerUser);
-
-// app.post("/login", login);
-
-// app.get("/users", getAllUsers);
-
-// app.use("/todo", todo);
-
-// connect to database
-// connectDatabase({
-//   user: "local",
-//   host: "localhost",
-//   database: "postgres",
-//   password: "12345",
-//   port: 5433,
-// });
-
-// // start the server
-// app.listen(5000, () => {
-//   console.log("Server is running on port 5000...");
-// });

@@ -9,11 +9,11 @@ COPY . .
 
 # Install dependencies
 RUN npm install
+
 # Create build
 RUN npm run build
 
-# ENV PORT=8080
-
+# expose port 5000
 EXPOSE 5000
 
 # Run the app

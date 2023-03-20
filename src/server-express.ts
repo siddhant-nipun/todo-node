@@ -23,13 +23,13 @@ app.get("/users", getAllUsers);
 app.use("/todo", todo);
 
 // connect to database
-connectDatabase({
-  user: "local",
-  host: "localhost",
-  database: "postgres",
-  password: "12345",
-  port: 5433,
-});
+// connectDatabase({
+//   user: "local",
+//   host: "localhost",
+//   database: "postgres",
+//   password: "12345",
+//   port: 5433,
+// });
 
 // start the server
 app.listen(5000, () => {
