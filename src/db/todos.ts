@@ -30,9 +30,29 @@ export const dbCreateTask = ({
   return dbPool?.query(sql, values);
 };
 
-export const dbGetUserTodos = ({ userId }: { userId: string }) => {
-  const sql = `Select id, description, is_completed from todos where user_id = $1 AND archived_at IS NULL`;
-  const values = [userId.trim()];
+export const dbGetUserTodos = ({
+  userId,
+  isCompleted,
+  search,
+}: {
+  userId: string;
+  isCompleted: boolean | null;
+  search: string | null;
+}) => {
+  const completedFilter: boolean = isCompleted !== null ? true : false;
+  const sql = `Select id, description, is_completed 
+              from todos 
+              where user_id = $1 
+              AND archived_at IS NULL 
+              AND($4 OR is_completed = $2) 
+              AND description ILIKE $3`;
+  const values = [
+    userId.trim(),
+    isCompleted,
+    search ? `%${search}%` : "%",
+    !completedFilter,
+  ];
+
   return dbPool?.query(sql, values);
 };
 

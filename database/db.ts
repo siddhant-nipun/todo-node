@@ -10,6 +10,14 @@ interface credInterface {
 
 let dbPool: Pool | undefined = undefined;
 
+const poolDemoUrl = async (connectionString: string) => {
+  dbPool = new Pool({
+    connectionString: connectionString,
+  });
+  const now = await dbPool.query("SELECT NOW()");
+  return now;
+};
+
 // Connect with a connection pool.
 const poolDemo = async (credentials: credInterface) => {
   dbPool = new Pool(credentials);
@@ -18,8 +26,12 @@ const poolDemo = async (credentials: credInterface) => {
   return now;
 };
 
-const connectDatabase = async (credentials: credInterface) => {
+const connectDatabase = async (
+  credentials: credInterface,
+  // connectionString: string
+) => {
   const poolResult = await poolDemo(credentials);
+  // const poolResult = await poolDemoUrl(connectionString);
   console.log("Time with pool: " + poolResult.rows[0]["now"]);
 };
 
